@@ -1,8 +1,8 @@
 'use client'
 
 
-import React, { useState } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import React, {useState} from "react"
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import axios, {AxiosError} from "axios";
 import toast from "react-hot-toast";
 
@@ -10,40 +10,40 @@ import toast from "react-hot-toast";
 const CreatePost = () => {
     const [title, setTitle] = useState("")
     const [isDisabled, setIsDisabled] = useState(false)
+    const queryClient = useQueryClient();
 
     let toastPostId: string;
 
     // Create a post
-    const { mutate } = useMutation(
-        async (title: string) => await axios.post('api/posts/addPost', { title }),
+    const {mutate} = useMutation(
+        async (title: string) => await axios.post('api/posts/addPost', {title}),
         {
             onError: (error) => {
                 // console.log(error)
-                if(error instanceof AxiosError) {
-                    toast.error(error?.response?.data.message, { id: toastPostId });
+                if (error instanceof AxiosError) {
+                    toast.error(error?.response?.data.message, {id: toastPostId});
                 }
                 setIsDisabled(false);
             },
             onSuccess: (data) => {
                 // console.log(data)
-                toast.success('Post created successfully.', { id: toastPostId });
+                toast.success('Post created successfully.', {id: toastPostId});
+                queryClient.invalidateQueries(['posts']).then(() => {
+                    // console.log('Posts invalidated')
+                });
                 setTitle("");
                 setIsDisabled(false);
             },
         });
 
-
     const submitPostHandler = async (e: React.FormEvent) => {
         e.preventDefault();
-        toastPostId = toast.loading('Creating your post...', { id: toastPostId });
+        toastPostId = toast.loading('Creating your post...', {id: toastPostId});
         setIsDisabled(true);
         // @ts-ignore
         await mutate(title);
 
     };
-
-
-
 
     return (
         <form onSubmit={submitPostHandler} className="bg-white my-8 p-8 rounded-md ">
