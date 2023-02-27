@@ -8,7 +8,20 @@ interface PostProps {
     avatar: string;
     name: string;
     postTitle: string;
-    comments: Array<any>;
+    comments: {
+        id: string;
+        message: string;
+        postId: string;
+        userId: string;
+        createdAt: string;
+        title: string;
+        user: {
+            id: string;
+            name: string;
+            image: string;
+            email: string;
+        }
+    }[];
 }
 
 
